@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Weekly Support Report</title>
+<style>
+  /* QSIC tokens */
+  @import url('https://rsms.me/inter/inter.css');
+  :root {
+    --background-primary: #FFFFFF;
+    --indigo-whispers:    #F6F6F9;
+    --indigo-05:          #EEEDF4;
+    --indigo-10:          #E5E4F3;
+    --indigo-20:          #DEDCFA;
+    --indigo-40:          #B8B4F2;
+    --indigo-50:          #A8A2EE;
+    --border-primary:     #DEDCFA;
+    --text-primary:      #1B1A25;
+    --text-secondary:    #383746;
+    --text-tertiary:     #65647E;
+    --text-quarternary:  #9798BB;
+    --text-accent:       #FFFFFF;
+    --indigo:            #5C52E4;
+    --indigo-dark:       #4A42B6;
+    --indigo-darker:     #2E2972;
+    --teal:              #27CCBC;
+    --teal-75:           #5DD9CD;
+    --teal-50:           #93E5DD;
+    --teal-20:           #D4F5F2;
+    --coral:             #F74E4A;
+    --coral-50:          #FBA6A4;
+    --warning-yellow:    #F79D01;
+    --success-green:     #10AC84;
+    --font-display:  'Mozaic VAR GEO', 'Inter', system-ui, sans-serif;
+    --font-body:     'Inter', system-ui, sans-serif;
+    --text-xs: .75rem; --text-sm: .875rem; --text-base: 1rem; --text-lg: 1.125rem;
+    --text-xl: 1.25rem; --text-2xl: 2rem; --text-3xl: 2.5rem; --text-4xl: 3.5rem;
+    --leading-tight: 1.2; --leading-normal: 1.5;
+    --space-1: .25rem; --space-2: .5rem; --space-3: .75rem; --space-4: 1rem;
+    --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+    --radius-sm: 4px; --radius-md: 8px; --radius-lg: 16px; --radius-full: 9999px;
+    --shadow-sm: 0 1px 3px rgba(27,26,37,.06), 0 1px 2px rgba(27,26,37,.04);
+    --shadow-lg: 0 12px 32px rgba(27,26,37,.1), 0 4px 8px rgba(27,26,37,.06);
+    --duration-fast: 150ms; --duration-base: 250ms;
+    --ease-out: cubic-bezier(.22,1,.36,1);
+  }
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--indigo-whispers);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01" 1, "ss04" 1, "cv11" 1;
+    padding: var(--space-8);
+  }
+  .page { max-width: 1200px; margin: 0 auto; }
+
+  /* Loading state */
+  #loading, #error {
+    text-align: center;
+    padding: var(--space-10);
+    color: var(--text-tertiary);
+  }
+  #error { color: var(--coral); }
+  .hidden { display: none !important; }
+
+  /* Header */
+  .report-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+  .report-header .logo-block {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: var(--indigo-darker);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+  }
+  .report-header .right { text-align: right; color: var(--text-tertiary); font-size: var(--text-sm); }
+  .report-header .right strong {
+    display: block;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: var(--text-base);
+    margin-bottom: 2px;
+  }
+
+  /* Hero report card */
+  .report-card {
+    background: linear-gradient(135deg, #2E2972 0%, #4A42B6 100%);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6) var(--space-8) var(--space-8);
+    color: var(--text-accent);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--space-8);
+  }
+  .report-card .title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 660;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-6);
+  }
+  .stats-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-4);
+    align-items: center;
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    margin-bottom: var(--space-6);
+  }
+  .stat {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; gap: var(--space-2); position: relative;
+  }
+  .stat:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: calc(var(--space-4) * -0.5);
+    top: 10%; bottom: 10%;
+    width: 1px;
+    background: rgba(255,255,255,0.16);
+  }
+  .stat .icon { color: var(--indigo-40); margin-bottom: var(--space-2); }
+  .stat .value {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: 660;
+    line-height: 1;
+  }
+  .stat .label { font-size: var(--text-base); color: rgba(255,255,255,0.85); }
+
+  /* Tabs */
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: var(--space-6);
+    background: rgba(255,255,255,0.06);
+  }
+  .tab {
+    appearance: none;
+    background: transparent;
+    color: rgba(255,255,255,0.65);
+    border: 0;
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+  }
+  .tab:hover { color: var(--text-accent); }
+  .tab.is-active { background: rgba(255,255,255,0.18); color: var(--text-accent); }
+  .tab:focus-visible { outline: 2px solid var(--teal-50); outline-offset: -2px; }
+
+  /* Chart */
+  .chart-area {
+    display: grid;
+    grid-template-columns: minmax(180px, 220px) 1fr;
+    gap: var(--space-8);
+    align-items: center;
+    min-height: 280px;
+  }
+  .legend { display: flex; flex-direction: column; gap: var(--space-3); }
+  .legend-item {
+    display: flex; align-items: flex-start; gap: var(--space-3);
+    font-size: var(--text-sm);
+    color: rgba(255,255,255,0.92);
+    line-height: var(--leading-tight);
+  }
+  .legend-swatch {
+    width: 12px; height: 12px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0; margin-top: 4px;
+  }
+  .legend-item .legend-text { display: flex; flex-direction: column; gap: 2px; }
+  .legend-item .legend-count { font-size: var(--text-xs); color: rgba(255,255,255,0.6); }
+  .chart-canvas { display: flex; align-items: center; justify-content: center; }
+  .chart-canvas svg {
+    width: 100%; height: auto;
+    max-width: 280px;
+    transition: opacity var(--duration-base) var(--ease-out);
+  }
+  .chart-canvas svg.fade { opacity: 0; }
+  .chart-caption {
+    text-align: center;
+    color: rgba(255,255,255,0.55);
+    font-size: var(--text-xs);
+    font-style: italic;
+    margin-top: var(--space-4);
+  }
+
+  /* Sections */
+  section.block {
+    background: var(--background-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: var(--space-6) var(--space-8);
+    margin-bottom: var(--space-6);
+  }
+  section.block h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 660;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-2);
+  }
+  section.block .section-sub {
+    color: var(--text-tertiary);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-5);
+  }
+
+  /* Cases table */
+  .table-scroll {
+    max-height: 520px;
+    overflow-y: auto;
+    border: 1px solid var(--indigo-05);
+    border-radius: var(--radius-sm);
+  }
+  .table-scroll table.cases thead th {
+    position: sticky;
+    top: 0;
+    background: var(--background-primary);
+    z-index: 1;
+  }
+  table.cases { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--text-sm); }
+  table.cases thead th {
+    text-align: left;
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--text-quarternary);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--indigo-05);
+  }
+  table.cases tbody td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--indigo-05);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+  table.cases tbody tr:hover td { background: var(--indigo-whispers); }
+  table.cases tbody tr:last-child td { border-bottom: 0; }
+  table.cases td.case-id {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  table.cases td.subject { color: var(--text-primary); }
+  table.cases td.store, table.cases td.opened { color: var(--text-tertiary); white-space: nowrap; }
+
+  /* Pills */
+  .pill {
+    display: inline-flex; align-items: center; gap: var(--space-1);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    height: 20px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .pill.cat-3rdparty  { background: var(--indigo-05); color: var(--indigo-darker); }
+  .pill.cat-customer  { background: var(--teal-20); color: #0C3D38; }
+  .pill.cat-qsic      { background: #F0E6FA; color: #4A2D8A; }
+  .pill.cat-other     { background: var(--indigo-10); color: var(--indigo-darker); }
+  .pill.cat-music     { background: var(--teal-20); color: #0C3D38; }
+  .pill.cat-install   { background: #DEF5F2; color: #1A4F4A; }
+  .pill.cat-hardware  { background: #FEE2E1; color: #8D0F0D; }
+  .pill.cat-access    { background: #F0E6FA; color: #4A2D8A; }
+  .pill.status-open    { background: var(--coral-50); color: #8D0F0D; }
+  .pill.status-closed  { background: var(--indigo-05); color: var(--text-tertiary); }
+  .pill.status-progress { background: #FEF3E2; color: #7A4A00; }
+
+  /* Two-up */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  .mini-table { width: 100%; font-size: var(--text-sm); }
+  .mini-table tr td { padding: var(--space-2) 0; border-bottom: 1px solid var(--indigo-05); }
+  .mini-table tr:last-child td { border-bottom: 0; }
+  .mini-table td.label { color: var(--text-tertiary); }
+  .mini-table td.value { color: var(--text-primary); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Faulty player section — highlighted for invoice reconciliation */
+  section.block.faulty-block {
+    border-left: 4px solid var(--coral);
+  }
+  section.block.faulty-block h2 .badge {
+    display: inline-block;
+    background: var(--coral);
+    color: white;
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-full);
+    vertical-align: middle;
+    margin-left: var(--space-3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  table.faulty {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--text-sm);
+  }
+  table.faulty thead th {
+    text-align: left;
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--text-quarternary);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--indigo-05);
+  }
+  table.faulty tbody td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--indigo-05);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+  table.faulty tbody tr:last-child td { border-bottom: 0; }
+  table.faulty td.case-id {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  table.faulty td.dates { color: var(--text-tertiary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  table.faulty td.note { color: var(--text-tertiary); font-size: var(--text-xs); }
+  .faulty-empty {
+    padding: var(--space-6);
+    text-align: center;
+    color: var(--text-tertiary);
+    font-style: italic;
+    background: var(--indigo-whispers);
+    border-radius: var(--radius-sm);
+  }
+
+  footer.report-footer {
+    text-align: center;
+    color: var(--text-quarternary);
+    font-size: var(--text-xs);
+    padding: var(--space-6) 0 var(--space-2);
+  }
+
+  @media (max-width: 900px) {
+    body { padding: var(--space-4); }
+    .chart-area { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div id="loading">Loading report…</div>
+  <div id="error" class="hidden">Couldn't load report data. Check that <code>data.json</code> is present and valid.</div>
+
+  <div id="report-content" class="hidden">
+    <!-- Header -->
+    <header class="report-header">
+      <div class="logo-block">
+        <svg width="84" height="32" viewBox="0 0 128 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="QSIC">
+          <path d="M84.5672 0.572815H75.6926V38.534H84.5672V0.572815Z" fill="white"/>
+          <path d="M34.9556 33.6669C36.7681 31.9492 38.1808 29.898 39.1929 27.5119C40.2036 25.1265 40.71 22.5018 40.71 19.6392C40.71 16.7765 40.2036 14.1336 39.1929 11.7095C38.1808 9.28617 36.7681 7.21455 34.9556 5.49683C33.1423 3.77912 30.9853 2.43355 28.4853 1.46013C25.9927 0.489629 23.2826 0.0036485 20.355 0V8.18797C21.8706 8.19162 23.3023 8.45796 24.6493 8.98918C26.0036 9.52405 27.1872 10.2778 28.1993 11.2505C29.2099 12.2239 30.0031 13.417 30.5752 14.829C31.148 16.2417 31.434 17.8259 31.434 19.5815C31.434 21.3372 31.148 22.979 30.5752 24.391C30.0024 25.8037 29.2099 26.996 28.1993 27.9694C27.1872 28.9428 26.0036 29.6871 24.6493 30.2023C23.2942 30.7175 21.8523 30.9751 20.3265 30.9751C18.8007 30.9751 17.415 30.7175 16.0607 30.2023C14.7057 29.6871 13.5316 28.9428 12.5392 27.9694C11.546 26.996 10.7543 25.8037 10.1633 24.391C9.57075 22.979 9.27595 21.3758 9.27595 19.5815H0C0 22.4828 0.505682 25.1265 1.51778 27.5119C2.52841 29.898 3.94111 31.9492 5.75442 33.6669C7.56699 35.3846 9.71377 36.7214 12.1955 37.6752C14.6765 38.6289 17.3858 39.1068 20.3258 39.1068C21.1423 39.1068 21.9406 39.066 22.7236 38.9923L29.0866 46.4929H39.5644L31.1159 36.4602C32.5315 35.6809 33.8121 34.7505 34.9548 33.6676L34.9556 33.6669Z" fill="white"/>
+          <path d="M97.7368 19.5246C97.7368 17.7697 98.0134 16.195 98.5672 14.8005C99.1203 13.4075 99.8931 12.2239 100.886 11.2505C101.879 10.2771 103.033 9.53281 104.35 9.01764C105.667 8.50247 107.031 8.24488 108.444 8.24488C110.696 8.24488 112.71 8.82719 114.484 9.99106C116.259 11.1557 117.509 12.8449 118.235 15.0581H127.739C127.319 12.8062 126.545 10.7551 125.42 8.90308C124.294 7.05182 122.891 5.46765 121.212 4.15054C119.531 2.83343 117.623 1.81258 115.486 1.08725C113.348 0.363391 111.057 0 108.615 0C105.638 0 102.908 0.48671 100.427 1.46013C97.9455 2.43355 95.7987 3.7886 93.9861 5.52529C92.1728 7.26271 90.7696 9.32411 89.778 11.7088C88.7848 14.0949 88.2894 16.6999 88.2894 19.5246C88.2894 19.5436 88.2908 19.5625 88.2908 19.5815H97.7383C97.7383 19.5625 97.7368 19.5436 97.7368 19.5246Z" fill="white"/>
+          <path d="M118.349 23.4752C117.661 25.8803 116.411 27.722 114.598 29.0005C112.785 30.2797 110.733 30.9189 108.443 30.9189V39.1046C108.482 39.1046 108.519 39.1068 108.558 39.1068C111.076 39.1068 113.425 38.7347 115.6 37.9904C117.776 37.2461 119.702 36.1866 121.383 34.8125C123.062 33.4385 124.465 31.7879 125.591 29.8601C126.716 27.9329 127.49 25.8044 127.91 23.4759H118.348L118.349 23.4752Z" fill="white"/>
+        </svg>
+      </div>
+      <div class="right">
+        <strong id="header-title"></strong>
+        <span id="header-period"></span>
+      </div>
+    </header>
+
+    <!-- Hero report card -->
+    <div class="report-card">
+      <div class="title">Case Report Split</div>
+
+      <div class="stats-strip">
+        <div class="stat">
+          <svg class="icon" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 11c.7-1.8 1-3 1-4a4 4 0 0 0-8 0c0 1 .3 2.2 1 4"/>
+            <path d="M5 15c-.6 1.5-.5 3.2 0 5"/>
+            <path d="M12 14a4 4 0 0 1-3 4"/>
+            <path d="M19 9c0-3-1.7-5-4-6"/>
+            <path d="M19 13c-1 2.5-2 5-3.5 7"/>
+            <path d="M9 12a3 3 0 0 1 6 0c0 3-1 5-3 8"/>
+          </svg>
+          <span class="value" id="s-unique">—</span>
+          <span class="label">Unique cases</span>
+        </div>
+        <div class="stat">
+          <svg class="icon" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <path d="M3 11h18"/>
+          </svg>
+          <span class="value" id="s-open">—</span>
+          <span class="label">Open cases</span>
+        </div>
+        <div class="stat">
+          <svg class="icon" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          </svg>
+          <span class="value" id="s-closed">—</span>
+          <span class="label">Closed cases</span>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Case split view">
+        <button class="tab is-active" id="tab-category"   role="tab" aria-selected="true"  aria-controls="chart-panel">Category</button>
+        <button class="tab"           id="tab-resolution" role="tab" aria-selected="false" aria-controls="chart-panel">Resolution</button>
+      </div>
+
+      <div class="chart-area" id="chart-panel" role="tabpanel">
+        <div class="legend" id="legend"></div>
+        <div class="chart-canvas">
+          <svg id="donut" viewBox="-110 -110 220 220" role="img" aria-label="Donut chart of cases by selected dimension">
+            <g id="donut-slices"></g>
+            <text id="donut-total" x="0" y="-4" text-anchor="middle"
+                  font-family="Mozaic VAR GEO, Inter, sans-serif" font-size="36" font-weight="660" fill="#FFFFFF">—</text>
+            <text id="donut-sub" x="0" y="22" text-anchor="middle"
+                  font-family="Inter, sans-serif" font-size="11" letter-spacing="0.08em" fill="rgba(255,255,255,0.65)">CASES</text>
+          </svg>
+        </div>
+      </div>
+      <div class="chart-caption">Hover a slice to see the count and share.</div>
+    </div>
+
+    <!-- All cases -->
+    <section class="block">
+      <h2>Cases logged this period</h2>
+      <p class="section-sub" id="cases-sub"></p>
+      <div class="table-scroll">
+        <table class="cases" aria-label="All cases">
+          <thead>
+            <tr>
+              <th>Case</th><th>Subject</th><th>Store</th><th>Category</th>
+              <th>Resolution</th><th>Status</th><th>Opened</th>
+            </tr>
+          </thead>
+          <tbody id="cases-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Two-up panels -->
+    <div class="two-col">
+      <section class="block">
+        <h2>Top stores by case volume</h2>
+        <p class="section-sub">Stores that contacted support most this week.</p>
+        <table class="mini-table"><tbody id="stores-body"></tbody></table>
+      </section>
+      <section class="block">
+        <h2>Common subjects</h2>
+        <p class="section-sub">Most frequent reasons stores contacted support.</p>
+        <table class="mini-table"><tbody id="subjects-body"></tbody></table>
+      </section>
+    </div>
+
+    <footer class="report-footer">
+      Generated for <span id="footer-client"></span> Account Management • Source: Salesforce Cases
+    </footer>
+  </div>
+</div>
+
+<script>
+  // ───────────────── INLINE DATA ─────────────────
+  const REPORT_DATA = {
+  "_comment": "JB Hi-Fi Salesforce export \u2014 31 March to 30 April 2026. Generated from Case Register.",
+  "report": {
+    "client": "JB Hi-Fi",
+    "periodLabel": "31 March \u2013 30 April 2026 (30 days)",
+    "subtitle": "29 cases raised by JB Hi-Fi (AU & NZ) over the 30-day reporting period. Excludes QSIC-initiated proactive monitoring tickets."
+  },
+  "totals": {
+    "unique": 29,
+    "open": 5,
+    "closed": 24
+  },
+  "categorySplit": [
+    {
+      "name": "Music Outage",
+      "value": 19,
+      "color": "#27CCBC"
+    },
+    {
+      "name": "New Store / Install",
+      "value": 7,
+      "color": "#5DD9CD"
+    },
+    {
+      "name": "Hardware Replacement",
+      "value": 2,
+      "color": "#F97B78"
+    },
+    {
+      "name": "Account / Access",
+      "value": 1,
+      "color": "#B8B4F2"
+    }
+  ],
+  "resolutionSplit": [
+    {
+      "name": "Resolved \u2014 remote troubleshoot",
+      "value": 17,
+      "color": "#27CCBC"
+    },
+    {
+      "name": "Resolved \u2014 install workflow",
+      "value": 5,
+      "color": "#5DD9CD"
+    },
+    {
+      "name": "In progress",
+      "value": 3,
+      "color": "#B8B4F2"
+    },
+    {
+      "name": "Awaiting client",
+      "value": 2,
+      "color": "#FBA6A4"
+    },
+    {
+      "name": "Replacement player shipped",
+      "value": 1,
+      "color": "#F97B78"
+    },
+    {
+      "name": "Resolved \u2014 access reset",
+      "value": 1,
+      "color": "#93E5DD"
+    }
+  ],
+  "recentCases": [
+    {
+      "id": "00111274",
+      "subject": "Music",
+      "store": "AU74 - Glendale",
+      "category": "Music Outage",
+      "resolution": "In progress",
+      "status": "open",
+      "opened": "30 Apr"
+    },
+    {
+      "id": "00111013",
+      "subject": "No Music",
+      "store": "AU165 - Waurn Ponds",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "27 Apr"
+    },
+    {
+      "id": "00111000",
+      "subject": "No Music",
+      "store": "AU14 - Queen Adelaide Building",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "27 Apr"
+    },
+    {
+      "id": "00110987",
+      "subject": "No Music - Qbit Player offline",
+      "store": "AU154 - Airport West",
+      "category": "Music Outage",
+      "resolution": "In progress",
+      "status": "open",
+      "opened": "25 Apr"
+    },
+    {
+      "id": "00110929",
+      "subject": "No Music",
+      "store": "AU88 - Doncaster",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "24 Apr"
+    },
+    {
+      "id": "00110861",
+      "subject": "Offline Qbit",
+      "store": "AU157 - Caringbah",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "23 Apr"
+    },
+    {
+      "id": "00110860",
+      "subject": "No Music",
+      "store": "AU29 - Cannington JB Home",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "23 Apr"
+    },
+    {
+      "id": "00110776",
+      "subject": "SHIPPED - Equipment Needed - [JB Hi-Fi AU247 - Mornington] - No Music",
+      "store": "AU247 - Mornington",
+      "category": "Hardware Replacement",
+      "resolution": "In progress",
+      "status": "open",
+      "opened": "22 Apr"
+    },
+    {
+      "id": "00110775",
+      "subject": "No Music",
+      "store": "AU203 - Pakenham JB Home",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "22 Apr"
+    },
+    {
+      "id": "00110771",
+      "subject": "Music Cutting In and Out",
+      "store": "NZ25 - Sylvia Park",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "22 Apr"
+    },
+    {
+      "id": "00110708",
+      "subject": "QSIC Log In",
+      "store": "AU169 - Port Macquarie",
+      "category": "Account / Access",
+      "resolution": "Resolved \u2014 access reset",
+      "status": "closed",
+      "opened": "21 Apr"
+    },
+    {
+      "id": "00110606",
+      "subject": "No Music",
+      "store": "AU192 - Castle Towers",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "19 Apr"
+    },
+    {
+      "id": "00110378",
+      "subject": "No Music - Qbit offline",
+      "store": "AU88 - Doncaster",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "15 Apr"
+    },
+    {
+      "id": "00110302",
+      "subject": "No Music",
+      "store": "AU60 - Liverpool",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "14 Apr"
+    },
+    {
+      "id": "00110301",
+      "subject": "No Music",
+      "store": "AU192 - Castle Towers",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "14 Apr"
+    },
+    {
+      "id": "00110213",
+      "subject": "QSIC tech booking",
+      "store": "2045 - Newmarket",
+      "category": "New Store / Install",
+      "resolution": "Resolved \u2014 install workflow",
+      "status": "closed",
+      "opened": "13 Apr"
+    },
+    {
+      "id": "00110211",
+      "subject": "QSIC tech booking",
+      "store": "2044 - Tauranga Crossing",
+      "category": "New Store / Install",
+      "resolution": "Resolved \u2014 install workflow",
+      "status": "closed",
+      "opened": "13 Apr"
+    },
+    {
+      "id": "00110207",
+      "subject": "No Music",
+      "store": "AU224 - Narellan",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "13 Apr"
+    },
+    {
+      "id": "00110194",
+      "subject": "RE: Qsic Quote: JB Hi-Fi 2044 - Tauranga Crossing - Q042635019-45013",
+      "store": "2044 - Tauranga Crossing",
+      "category": "New Store / Install",
+      "resolution": "Resolved \u2014 install workflow",
+      "status": "closed",
+      "opened": "13 Apr"
+    },
+    {
+      "id": "00110173",
+      "subject": "New Store Request",
+      "store": "2044 - Tauranga Crossing",
+      "category": "New Store / Install",
+      "resolution": "Resolved \u2014 install workflow",
+      "status": "closed",
+      "opened": "13 Apr"
+    },
+    {
+      "id": "00110172",
+      "subject": "FW: New Store Request For JB Hi-Fi 2044 - Tauranga Crossing",
+      "store": "2044 - Tauranga Crossing",
+      "category": "New Store / Install",
+      "resolution": "Resolved \u2014 install workflow",
+      "status": "closed",
+      "opened": "13 Apr"
+    },
+    {
+      "id": "00110165",
+      "subject": "No Music",
+      "store": "AU65 - Elizabeth SA",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "12 Apr"
+    },
+    {
+      "id": "00109889",
+      "subject": "No Music",
+      "store": "AU120 - Rockhampton",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "9 Apr"
+    },
+    {
+      "id": "00109829",
+      "subject": "Quote Accepted - Q042635020-45014",
+      "store": "2045 - Newmarket",
+      "category": "New Store / Install",
+      "resolution": "Awaiting client",
+      "status": "progress",
+      "opened": "8 Apr"
+    },
+    {
+      "id": "00109828",
+      "subject": "Quote emailed to customer",
+      "store": "2044 - Tauranga Crossing",
+      "category": "New Store / Install",
+      "resolution": "Awaiting client",
+      "status": "progress",
+      "opened": "8 Apr"
+    },
+    {
+      "id": "00109819",
+      "subject": "No Music",
+      "store": "AU224 - Narellan",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "8 Apr"
+    },
+    {
+      "id": "00109612",
+      "subject": "SHIPPED - [JB Hi-Fi AU160 - Bankstown JB Home] - No Music",
+      "store": "AU160 - Bankstown JB Home",
+      "category": "Hardware Replacement",
+      "resolution": "Replacement player shipped",
+      "status": "closed",
+      "opened": "4 Apr"
+    },
+    {
+      "id": "00109477",
+      "subject": "No Music",
+      "store": "AU120 - Rockhampton",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "2 Apr"
+    },
+    {
+      "id": "00109412",
+      "subject": "No Music",
+      "store": "AU130 - Wollongong Central JB Home",
+      "category": "Music Outage",
+      "resolution": "Resolved \u2014 remote troubleshoot",
+      "status": "closed",
+      "opened": "1 Apr"
+    }
+  ],
+  "faultyPlayers": [
+    {
+      "id": "00109612",
+      "store": "AU160 - Bankstown JB Home",
+      "opened": "4 Apr",
+      "closed": "15 Apr",
+      "status": "closed",
+      "note": "Replacement player shipped following diagnostic confirmation; install completed and playback restored."
+    },
+    {
+      "id": "00110776",
+      "store": "AU247 - Mornington",
+      "opened": "22 Apr",
+      "closed": "\u2014",
+      "status": "open",
+      "note": "Replacement player dispatched; awaiting site install and confirmation of playback."
+    }
+  ],
+  "topStores": [
+    {
+      "name": "2044 - Tauranga Crossing",
+      "count": 5
+    },
+    {
+      "name": "AU120 - Rockhampton",
+      "count": 2
+    },
+    {
+      "name": "AU224 - Narellan",
+      "count": 2
+    },
+    {
+      "name": "2045 - Newmarket",
+      "count": 2
+    },
+    {
+      "name": "AU192 - Castle Towers",
+      "count": 2
+    },
+    {
+      "name": "AU88 - Doncaster",
+      "count": 2
+    }
+  ],
+  "commonSubjects": [
+    {
+      "name": "Music outage / player offline",
+      "count": 20
+    },
+    {
+      "name": "New store install / booking",
+      "count": 4
+    },
+    {
+      "name": "New store quote",
+      "count": 3
+    },
+    {
+      "name": "Account access / login",
+      "count": 1
+    },
+    {
+      "name": "Other",
+      "count": 1
+    }
+  ]
+};
+  renderReport(REPORT_DATA);
+
+  function renderReport(data) {
+    // Header & footer text
+    document.getElementById('header-title').textContent  = `${data.report.client} — Weekly Support Report`;
+    document.getElementById('header-period').textContent = data.report.periodLabel;
+    document.getElementById('cases-sub').textContent     = data.report.subtitle;
+    document.getElementById('footer-client').textContent = data.report.client;
+    document.title = `${data.report.client} — Weekly Support Report`;
+
+    // Stats strip
+    document.getElementById('s-unique').textContent = data.totals.unique;
+    document.getElementById('s-open').textContent   = data.totals.open;
+    document.getElementById('s-closed').textContent = data.totals.closed;
+
+    // Cases table
+    const catPillClass = {
+      '3rd Party': 'cat-3rdparty',
+      'Customer / Education Opp': 'cat-customer',
+      'QSIC': 'cat-qsic',
+      'Other': 'cat-other',
+      'Music Outage': 'cat-music',
+      'New Store / Install': 'cat-install',
+      'Hardware Replacement': 'cat-hardware',
+      'Account / Access': 'cat-access',
+    };
+    const statusPill = {
+      open:     { cls: 'status-open',     label: 'Open' },
+      closed:   { cls: 'status-closed',   label: 'Closed' },
+      progress: { cls: 'status-progress', label: 'In progress' },
+    };
+    const tbody = document.getElementById('cases-body');
+    data.recentCases.forEach(c => {
+      const tr = document.createElement('tr');
+      const sp = statusPill[c.status] || statusPill.closed;
+      tr.innerHTML = `
+        <td class="case-id">#${c.id}</td>
+        <td class="subject">${c.subject}</td>
+        <td class="store">${c.store}</td>
+        <td><span class="pill ${catPillClass[c.category] || 'cat-other'}">${c.category}</span></td>
+        <td>${c.resolution}</td>
+        <td><span class="pill ${sp.cls}">${sp.label}</span></td>
+        <td class="opened">${c.opened}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Top stores
+    const storesBody = document.getElementById('stores-body');
+    data.topStores.forEach(s => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="label">${s.name}</td><td class="value">${s.count}</td>`;
+      storesBody.appendChild(tr);
+    });
+
+    // Common subjects
+    const subjBody = document.getElementById('subjects-body');
+    data.commonSubjects.forEach(s => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="label">${s.name}</td><td class="value">${s.count}</td>`;
+      subjBody.appendChild(tr);
+    });
+
+    // Donut + tabs
+    setupDonut(data.categorySplit, data.resolutionSplit);
+
+    // Show content
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('report-content').classList.remove('hidden');
+  }
+
+  // ───────────────── DONUT ─────────────────
+  function setupDonut(categoryData, resolutionData) {
+    const slicesGroup = document.getElementById('donut-slices');
+    const totalLabel  = document.getElementById('donut-total');
+    const subLabel    = document.getElementById('donut-sub');
+    const legend      = document.getElementById('legend');
+    const svg         = document.getElementById('donut');
+    const tabCategory   = document.getElementById('tab-category');
+    const tabResolution = document.getElementById('tab-resolution');
+
+    const R_OUTER = 100, R_INNER = 62;
+
+    function polar(cx, cy, r, angle) {
+      return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
+    }
+    function donutPath(startAngle, endAngle) {
+      const [x1,y1] = polar(0,0,R_OUTER,startAngle);
+      const [x2,y2] = polar(0,0,R_OUTER,endAngle);
+      const [x3,y3] = polar(0,0,R_INNER,endAngle);
+      const [x4,y4] = polar(0,0,R_INNER,startAngle);
+      const large = (endAngle - startAngle) > Math.PI ? 1 : 0;
+      return `M ${x1} ${y1} A ${R_OUTER} ${R_OUTER} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${R_INNER} ${R_INNER} 0 ${large} 0 ${x4} ${y4} Z`;
+    }
+
+    function render(data, label) {
+      const total = data.reduce((a,b) => a + b.value, 0);
+      slicesGroup.innerHTML = '';
+      let angle = -Math.PI / 2;
+      data.forEach(d => {
+        const sweep = (d.value / total) * Math.PI * 2;
+        const next = angle + sweep;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', donutPath(angle, next));
+        path.setAttribute('fill', d.color);
+        path.setAttribute('stroke', '#2E2972');
+        path.setAttribute('stroke-width', '1.5');
+        path.style.transition = 'filter 150ms';
+        path.style.cursor = 'pointer';
+
+        const pct = ((d.value / total) * 100).toFixed(0);
+        const titleEl = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        titleEl.textContent = `${d.name}: ${d.value} cases (${pct}%)`;
+        path.appendChild(titleEl);
+
+        path.addEventListener('mouseenter', () => {
+          path.style.filter = 'brightness(1.08)';
+          totalLabel.textContent = d.value;
+          subLabel.textContent = `${pct}%`;
+        });
+        path.addEventListener('mouseleave', () => {
+          path.style.filter = '';
+          totalLabel.textContent = total;
+          subLabel.textContent = label;
+        });
+        slicesGroup.appendChild(path);
+        angle = next;
+      });
+
+      totalLabel.textContent = total;
+      subLabel.textContent = label;
+
+      legend.innerHTML = '';
+      data.forEach(d => {
+        const row = document.createElement('div');
+        row.className = 'legend-item';
+        const pct = ((d.value / total) * 100).toFixed(0);
+        row.innerHTML = `
+          <span class="legend-swatch" style="background:${d.color}"></span>
+          <div class="legend-text">
+            <span>${d.name}</span>
+            <span class="legend-count">${d.value} cases · ${pct}%</span>
+          </div>
+        `;
+        legend.appendChild(row);
+      });
+    }
+
+    function setTab(which) {
+      const isCat = which === 'category';
+      tabCategory.classList.toggle('is-active', isCat);
+      tabResolution.classList.toggle('is-active', !isCat);
+      tabCategory.setAttribute('aria-selected', isCat);
+      tabResolution.setAttribute('aria-selected', !isCat);
+      svg.classList.add('fade');
+      setTimeout(() => {
+        render(isCat ? categoryData : resolutionData, 'CASES');
+        svg.classList.remove('fade');
+      }, 150);
+    }
+
+    tabCategory.addEventListener('click',   () => setTab('category'));
+    tabResolution.addEventListener('click', () => setTab('resolution'));
+    render(categoryData, 'CASES');
+  }
+</script>
+</body>
+</html>
